@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
   <Tracking>
+    <ImageTarget name="QR" size="0.050000 0.049887" />
+    <ImageTarget name="po" size="0.050000 0.046453" />
+    <ImageTarget name="hiragana-chart" size="0.050000 0.064706" />
+    <ImageTarget name="poo" size="0.050000 0.060140" />
     <ImageTarget name="trekt" size="0.500000 0.386250" />
   </Tracking>
 </QCARConfig>
