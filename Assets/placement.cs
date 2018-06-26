@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,6 +30,9 @@ public class placement : MonoBehaviour {
     private bool nextColor = true;
 
     private Vector3 lastVector = new Vector3(-1, 0, 0);
+    private string gameId;
+    private const string baseUrl = "http://localhost:4567/";
+    private WebSocket w;
 
     // Use this for initialization
     void Start () {
@@ -34,6 +41,46 @@ public class placement : MonoBehaviour {
         leftButton.GetComponent<Button>().onClick.AddListener(LeftClick);
         rightButton.GetComponent<Button>().onClick.AddListener(RightClick);
         placeButton.GetComponent<Button>().onClick.AddListener(PlaceClick);
+        
+        gameId = HttPost(baseUrl + "create");
+        HttPost(baseUrl + "join/" + gameId + "/peter");
+        HttPost(baseUrl + "start/" + gameId);
+
+        w = new WebSocket(new Uri("wss://localhost:4567/state"));
+        StartCoroutine(w.Connect());
+        w.SendString(gameId);
+
+        ThreadStart work = WebSocketListener;
+        Thread thread = new Thread(work);
+        thread.Start();
+    }
+
+    class TurnEvent {
+        Game game;
+        string previousPlayer;
+        bool win;
+    }
+
+    class Game {
+        string state;
+        long id;
+        string[] players;
+        string currentPlayer;
+        int width;
+        int height;
+        string[,] grid;
+    }
+
+    void WebSocketListener() {
+        while (true) {
+            string reply = w.RecvString();
+
+            if (reply == null)
+                break;
+
+            var turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
+            Debug.Log(turnEvent);
+        }
     }
 
     void LeftClick() {
@@ -50,6 +97,27 @@ public class placement : MonoBehaviour {
 
     void PlaceClick() {
         PlaceAt(fieldPosition);
+    }
+    
+    static string HttPost(string url, string content = "") {
+        HttpWebRequest req = WebRequest.Create(url)
+                                as HttpWebRequest;
+        req.Method = "POST";
+        req.ContentType = "appliaction/json";
+
+        var newStream = req.GetRequestStream();
+        var data = Encoding.ASCII.GetBytes(content);
+        newStream.Write(data, 0, data.Length);
+        newStream.Close();
+
+        string result = null;
+        using (HttpWebResponse resp = req.GetResponse()
+                                        as HttpWebResponse) {
+            StreamReader reader =
+                new StreamReader(resp.GetResponseStream());
+            result = reader.ReadToEnd();
+        }
+        return result;
     }
 
     // Update is called once per frame
@@ -78,6 +146,7 @@ public class placement : MonoBehaviour {
     }
 
     void PlaceAt(int x) {
+        HttPost(baseUrl + "turn/" + gameId + "/peter/" + x);
         for (int y = 5; y >= 0; y--) {
             if (field[x, y] == false) {
                 field[x, y] = true;
