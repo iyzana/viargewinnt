@@ -5,8 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class mainMenu : MonoBehaviour {
-    
-    
+
     public Button localGame;
     public Button startOnline;
     public Button joinOnline;
@@ -16,10 +15,10 @@ public class mainMenu : MonoBehaviour {
         localGame.GetComponent<Button>().onClick.AddListener(StartLocalGame);
         startOnline.GetComponent<Button>().onClick.AddListener(StartOnlineGame);
         joinOnline.GetComponent<Button>().onClick.AddListener(JoinOnlineGame);
-	}
+    }
     
     void StartLocalGame() {
-         SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Additive);
+         SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
     }
     
     void StartOnlineGame(){
