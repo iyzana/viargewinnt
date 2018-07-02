@@ -26,8 +26,8 @@ public class placement : MonoBehaviour {
     public Transform tracked;
     private Transform token;
 
-    public string[,] field = new string[7,6];
-    
+    public string[,] field = new string[7, 6];
+
     private long lastChange = 0;
     private int lastPosition = -2;
     private int fieldPosition = -1;
@@ -37,11 +37,11 @@ public class placement : MonoBehaviour {
     private WebSocket w;
 
     // Use this for initialization
-    void Start () {
+    void Start() {
 
         w = HttpService.w;
 
-        for(int x = 0; x<field.GetLength(0); x++)
+        for (int x = 0; x < field.GetLength(0); x++)
         {
             for (int y = 0; y < field.GetLength(1); y++)
             {
@@ -56,12 +56,9 @@ public class placement : MonoBehaviour {
         placeButton.GetComponent<Button>().onClick.AddListener(PlaceClick);
 
         text.text = "Spieler 1 beginnt!";
-
-        ThreadStart work = WebSocketListener;
-        Thread thread = new Thread(work);
-        thread.Start();
     }
-
+    
+    [System.Serializable]
     class TurnEvent {
         public Game game;
         public string previousPlayer;
@@ -69,6 +66,7 @@ public class placement : MonoBehaviour {
         public string messageType;
     }
 
+    [System.Serializable]
     class Game {
         public string state;
         public long id;
@@ -76,23 +74,13 @@ public class placement : MonoBehaviour {
         public string currentPlayer;
         public int width;
         public int height;
-        public string[,] grid;
+        public Column[] grid;
     }
 
-    void WebSocketListener() {
-        while (true) {
-            string reply = w.RecvString();
-            if (reply == null)
-            {
-                Thread.Sleep(1000);
-                continue;
-            }
-
-            Debug.Log("got websocket message: " + reply);
-            TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
-            Debug.Log("TurnEvent: " + turnEvent.ToString());
-            renderChanges(turnEvent);
-        }
+    [System.Serializable]
+    class Column
+    {
+        public string[] pieces;
     }
 
     void LeftClick() {
@@ -114,6 +102,8 @@ public class placement : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        CheckWebsocket();
+
         bool trackingPositionChanged = !lastVector.Equals(tracked.position);
         if (trackingPositionChanged) {
             fieldPosition = (int)(tracked.position.x * 30f) + 3;
@@ -171,6 +161,19 @@ public class placement : MonoBehaviour {
         
     }
 
+    private void CheckWebsocket()
+    {
+        string reply = w.RecvString();
+        if (reply == null)
+        {
+            return;
+        }
+
+        Debug.Log("got websocket message: " + reply);
+        TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
+        renderChanges(turnEvent);
+    }
+
     private void renderChanges(TurnEvent turnEvent)
     {
         if (turnEvent.win)
@@ -184,10 +187,10 @@ public class placement : MonoBehaviour {
             {
                 for (int y = 0; y < field.GetLength(1); y++)
                 {
-                    if (!field[x, y].Equals(turnEvent.game.grid[x, y]))
+                    if (!field[x, y].Equals(turnEvent.game.grid[x].pieces[y]))
                     {
-                        field[x, y] = turnEvent.game.grid[x, y];
-                        Transform material = turnEvent.game.grid[x, y].Equals(HttpService.player) ? tokenLightPrefab : tokenDarkPrefab;
+                        field[x, y] = turnEvent.game.grid[x].pieces[y];
+                        Transform material = turnEvent.game.grid[x].pieces[y].Equals(HttpService.player) ? tokenLightPrefab : tokenDarkPrefab;
                         Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
                     }
                 }
