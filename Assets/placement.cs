@@ -63,19 +63,20 @@ public class placement : MonoBehaviour {
     }
 
     class TurnEvent {
-        Game game;
-        string previousPlayer;
-        bool win;
+        public Game game;
+        public string previousPlayer;
+        public bool win;
+        public string messageType;
     }
 
     class Game {
-        string state;
-        long id;
-        string[] players;
-        string currentPlayer;
-        int width;
-        int height;
-        string[,] grid;
+        public string state;
+        public long id;
+        public string[] players;
+        public string currentPlayer;
+        public int width;
+        public int height;
+        public string[,] grid;
     }
 
     void WebSocketListener() {
@@ -83,10 +84,12 @@ public class placement : MonoBehaviour {
             string reply = w.RecvString();
             Debug.Log("got websocket message: " + reply);
             if (reply == null)
+            {
                 break;
-
+            }
             TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
-            text.text = "ksfdhjlfsnhgdjklgjfffffffffffffffffffffffffffffffffffffff";
+            Debug.Log("TurnEvent: " + turnEvent.ToString());
+            renderChanges(turnEvent);
         }
     }
 
@@ -160,6 +163,31 @@ public class placement : MonoBehaviour {
                     token = Instantiate(placeMaterial, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
                     break;
 
+                }
+            }
+        }
+        
+    }
+
+    private void renderChanges(TurnEvent turnEvent)
+    {
+        if (turnEvent.win)
+        {
+            GameInformation.WINNINGTEXT = turnEvent.previousPlayer + " hat gewonnen!!";
+            SceneManager.LoadScene("viargewinnt-winning-scene", LoadSceneMode.Single);
+        }
+        else
+        {
+            for (int x = 0; x < field.GetLength(0); x++)
+            {
+                for (int y = 0; y < field.GetLength(1); y++)
+                {
+                    if (!field[x, y].Equals(turnEvent.game.grid[x, y]))
+                    {
+                        field[x, y] = turnEvent.game.grid[x, y];
+                        Transform material = turnEvent.game.grid[x, y].Equals(HttpService.player) ? tokenLightPrefab : tokenDarkPrefab;
+                        Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
+                    }
                 }
             }
         }
