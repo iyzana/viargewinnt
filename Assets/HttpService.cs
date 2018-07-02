@@ -18,6 +18,8 @@ public class HttpService{
         req.Method = "POST";
         req.ContentType = "appliaction/json";
 
+        Debug.Log("request url: " + url);
+
         var newStream = req.GetRequestStream();
         var data = Encoding.ASCII.GetBytes(content);
         newStream.Write(data, 0, data.Length);
@@ -30,15 +32,17 @@ public class HttpService{
             StreamReader reader =
                 new StreamReader(resp.GetResponseStream());
             result = reader.ReadToEnd();
+            Debug.Log("result: " + result);
         }
         return result;
     }
 
     public static void startSocket()
     {
-        w = new WebSocket(new Uri("wss://localhost:4567/state"));
+        w = new WebSocket(new Uri("ws://localhost:4567/state"));
         //StartCoutine
-        w.Connect();
+        var enumerator = w.Connect();
+        while (enumerator.MoveNext());
         w.SendString(gameId);
     }
 
