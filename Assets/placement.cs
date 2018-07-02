@@ -9,10 +9,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class placement : MonoBehaviour {
+    private int width = 7;
+    private int height = 6;
 
     public Button leftButton;
     public Button rightButton;
     public Button placeButton;
+
+    public Text text;
 
     public Transform tokenLightPrefab;
     public Transform tokenDarkPrefab;
@@ -22,7 +26,7 @@ public class placement : MonoBehaviour {
     public Transform tracked;
     private Transform token;
 
-    public bool[,] field = new bool[7,6];
+    public string[,] field = new string[7,6];
     
     private long lastChange = 0;
     private int lastPosition = -2;
@@ -36,11 +40,20 @@ public class placement : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        for(int x = 0; x<field.GetLength(0); x++)
+        {
+            for (int y = 0; y < field.GetLength(1); y++)
+            {
+                field[x, y] = "";
+            }
+        }
         token = Instantiate(tokenPlaceLightPrefab, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
 
         leftButton.GetComponent<Button>().onClick.AddListener(LeftClick);
         rightButton.GetComponent<Button>().onClick.AddListener(RightClick);
         placeButton.GetComponent<Button>().onClick.AddListener(PlaceClick);
+
+        text.text = "Spieler 1 beginnt!";
         
         gameId = HttPost(baseUrl + "create");
         HttPost(baseUrl + "join/" + gameId + "/peter");
@@ -146,18 +159,91 @@ public class placement : MonoBehaviour {
     }
 
     void PlaceAt(int x) {
-        HttPost(baseUrl + "turn/" + gameId + "/peter/" + x);
+        //HttPost(baseUrl + "turn/" + gameId + "/peter/" + x);
         for (int y = 5; y >= 0; y--) {
-            if (field[x, y] == false) {
-                field[x, y] = true;
+            if (field[x, y].Equals("")) {
+                field[x, y] = nextColor ? "Spieler1" : "Spieler2";
+                if (isWon())
+                {
+                    text.text = field[x, y] + " hat gewonnen!!";
+                    break;
+                }
+                              
                 Transform material = nextColor ? tokenLightPrefab : tokenDarkPrefab;
                 Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
                 nextColor = !nextColor;
                 Destroy(token.gameObject);
                 Transform placeMaterial = nextColor ? tokenPlaceLightPrefab : tokenPlaceDarkPrefab;
+                text.text = nextColor ? "Spieler1 ist am Zug!" : "Spieler2 ist am Zug!";
                 token = Instantiate(placeMaterial, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
                 break;
+                               
             }
         }
+    }
+
+    private Boolean isWon()
+    {
+        // diagonals
+        for (int x = 0; x < width - 3; x++)
+        {
+            for (int y = 0; y < height - 3; y++)
+            {
+                if (checkFour(x, y, (cx, i)=>cx + i, (cy, i)=>cy + i))
+                {
+                    return true;
+                }
+                if (checkFour(x, y, (cx, i)=>cx + i, (cy, i)=>cy + 3 - i))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // horizontal
+        for (int x = 0; x < width - 3; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (checkFour(x, y, (cx, i)=>cx + i, (cy, i)=>cy))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // vertical
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height - 3; y++)
+            {
+                if (checkFour(x, y, (cx, i)=>cx, (cy, i)=>cy + i))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private Boolean checkFour(int x, int y, Func<int, int, int> cx, Func<int, int, int> cy)
+    {
+        String player = field[cx(x, 0),cy(y, 0)];
+
+        if (player.Equals(""))
+        {
+            return false;
+        }
+
+        for (int i = 1; i < 4; i++)
+        {
+            if (!player.Equals(field[cx(x, i),cy(y, i)]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
