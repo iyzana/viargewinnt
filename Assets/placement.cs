@@ -79,6 +79,8 @@ public class placement : MonoBehaviour {
         public string[,] grid;
     }
 
+
+    //TODO: FIX 
     void WebSocketListener() {
         while (true) {
             string reply = w.RecvString();

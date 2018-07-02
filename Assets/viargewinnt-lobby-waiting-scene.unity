@@ -531,12 +531,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1860742171}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 671933f7b8e63824c83ddd3f0a7bae47, type: 3}
+  m_Script: {fileID: 11500000, guid: facb03fef6e51b14ba6c8f48e4c7c1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startButton: {fileID: 0}
-  spieler: {fileID: 0}
-  gameIdText: {fileID: 1648564069}
 --- !u!4 &1860742173
 Transform:
   m_ObjectHideFlags: 0
