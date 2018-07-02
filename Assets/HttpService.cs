@@ -39,7 +39,7 @@ public class HttpService{
         w = new WebSocket(new Uri("wss://localhost:4567/state"));
         //StartCoutine
         w.Connect();
-        w.Send(gameId);
+        w.SendString(gameId);
     }
 
 
