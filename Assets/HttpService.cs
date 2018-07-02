@@ -40,9 +40,14 @@ public class HttpService{
     public static void startSocket()
     {
         w = new WebSocket(new Uri("ws://localhost:4567/state"));
-        //StartCoutine
         var enumerator = w.Connect();
-        while (enumerator.MoveNext());
+        while (enumerator.MoveNext())
+            ;
+        if (w.Error == null)
+            Debug.Log("websocket connected");
+        else
+            Debug.Log("websocket got error: " + w.Error);
+        Debug.Log("sending game id " + gameId);
         w.SendString(gameId);
     }
 

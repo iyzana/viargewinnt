@@ -84,11 +84,13 @@ public class placement : MonoBehaviour {
     void WebSocketListener() {
         while (true) {
             string reply = w.RecvString();
-            Debug.Log("got websocket message: " + reply);
             if (reply == null)
             {
-                break;
+                Thread.Sleep(1000);
+                continue;
             }
+
+            Debug.Log("got websocket message: " + reply);
             TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
             Debug.Log("TurnEvent: " + turnEvent.ToString());
             renderChanges(turnEvent);

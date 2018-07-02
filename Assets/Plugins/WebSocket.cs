@@ -128,9 +128,9 @@ public class WebSocket
 	}
 
 	public void Send(byte[] buffer)
-	{
+    {
 		m_Socket.Send(buffer);
-	}
+    }
 
 	public byte[] Recv()
 	{
