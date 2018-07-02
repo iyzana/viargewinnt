@@ -23,7 +23,7 @@ public class WebSocket
 
 	public void SendString(string str)
 	{
-		Send(Encoding.UTF8.GetBytes (str));
+		Send(str);
 	}
 
 	public string RecvString()
@@ -127,9 +127,9 @@ public class WebSocket
 			yield return 0;
 	}
 
-	public void Send(byte[] buffer)
+	public void Send(String str)
     {
-		m_Socket.Send(buffer);
+		m_Socket.Send(str);
     }
 
 	public byte[] Recv()

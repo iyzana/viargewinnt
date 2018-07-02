@@ -4,16 +4,17 @@ using System.Net;
 using System.Text;
 using UnityEngine;
 
-public class HttpService{
+public class HttpService
+{
 
     public static string gameId { get; set; }
     public static string player { get; set; }
-    private const string baseUrl = "http://localhost:4567/";
+    private const string baseUrl = "localhost:4567/";
     public static WebSocket w;
 
     public static string HttPost(string url, string content = "")
     {
-        HttpWebRequest req = WebRequest.Create(baseUrl+url)
+        HttpWebRequest req = WebRequest.Create("http://" + baseUrl + url)
                                 as HttpWebRequest;
         req.Method = "POST";
         req.ContentType = "appliaction/json";
@@ -39,7 +40,7 @@ public class HttpService{
 
     public static void startSocket()
     {
-        w = new WebSocket(new Uri("ws://localhost:4567/state"));
+        w = new WebSocket(new Uri("ws://" + baseUrl + "state"));
         var enumerator = w.Connect();
         while (enumerator.MoveNext())
             ;
