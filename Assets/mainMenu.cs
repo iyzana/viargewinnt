@@ -18,15 +18,21 @@ public class mainMenu : MonoBehaviour {
     }
     
     void StartLocalGame() {
+        GameInformation.GAMEMODE = "LOCAL";
          SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
+        
     }
     
     void StartOnlineGame(){
-        
+        GameInformation.GAMEMODE = "ONLINE";
+        SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
+
     }
     
     void JoinOnlineGame(){
-        
+        GameInformation.GAMEMODE = "JOINONLINE";
+        SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
+
     }
 	
 	// Update is called once per frame
