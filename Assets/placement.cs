@@ -34,12 +34,13 @@ public class placement : MonoBehaviour {
     private bool nextColor = true;
 
     private Vector3 lastVector = new Vector3(-1, 0, 0);
-    private string gameId;
-    private const string baseUrl = "http://localhost:4567/";
     private WebSocket w;
 
     // Use this for initialization
     void Start () {
+
+        w = HttpService.w;
+
         for(int x = 0; x<field.GetLength(0); x++)
         {
             for (int y = 0; y < field.GetLength(1); y++)
@@ -55,17 +56,6 @@ public class placement : MonoBehaviour {
         placeButton.GetComponent<Button>().onClick.AddListener(PlaceClick);
 
         text.text = "Spieler 1 beginnt!";
-
-        if (!isLocal)
-        {
-            gameId = HttPost(baseUrl + "create");
-            HttPost(baseUrl + "join/" + gameId + "/peter");
-            HttPost(baseUrl + "start/" + gameId);
-
-            w = new WebSocket(new Uri("wss://localhost:4567/state"));
-            StartCoroutine(w.Connect());
-            w.SendString(gameId);
-        }
 
         ThreadStart work = WebSocketListener;
         Thread thread = new Thread(work);
@@ -91,12 +81,11 @@ public class placement : MonoBehaviour {
     void WebSocketListener() {
         while (true) {
             string reply = w.RecvString();
-
             if (reply == null)
                 break;
 
-            var turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
-            Debug.Log(turnEvent);
+            TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
+            text.text = "ksfdhjlfsnhgdjklgjfffffffffffffffffffffffffffffffffffffff";
         }
     }
 
@@ -115,27 +104,7 @@ public class placement : MonoBehaviour {
     void PlaceClick() {
         PlaceAt(fieldPosition);
     }
-    
-    static string HttPost(string url, string content = "") {
-        HttpWebRequest req = WebRequest.Create(url)
-                                as HttpWebRequest;
-        req.Method = "POST";
-        req.ContentType = "appliaction/json";
-
-        var newStream = req.GetRequestStream();
-        var data = Encoding.ASCII.GetBytes(content);
-        newStream.Write(data, 0, data.Length);
-        newStream.Close();
-
-        string result = null;
-        using (HttpWebResponse resp = req.GetResponse()
-                                        as HttpWebResponse) {
-            StreamReader reader =
-                new StreamReader(resp.GetResponseStream());
-            result = reader.ReadToEnd();
-        }
-        return result;
-    }
+   
 
     // Update is called once per frame
     void Update () {
@@ -165,7 +134,7 @@ public class placement : MonoBehaviour {
     void PlaceAt(int x) {
         if (!isLocal)
         {
-            HttPost(baseUrl + "turn/" + gameId + "/peter/" + x);
+            HttpService.HttPost("turn/" + HttpService.gameId + "/"+HttpService.player+"/" + x);
         }
         else
         {
@@ -186,7 +155,7 @@ public class placement : MonoBehaviour {
                     nextColor = !nextColor;
                     Destroy(token.gameObject);
                     Transform placeMaterial = nextColor ? tokenPlaceLightPrefab : tokenPlaceDarkPrefab;
-                    text.text = nextColor ? "Spieler1 ist am Zug!" : "Spieler2 ist am Zug!";
+                    //text.text = nextColor ? "Spieler1 ist am Zug!" : "Spieler2 ist am Zug!";
                     token = Instantiate(placeMaterial, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
                     break;
 

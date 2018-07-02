@@ -17,4 +17,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/viargewinnt-winning-scene.unity
     guid: a9e4bf48e4dc8ae4f9b34d84494ded15
+  - enabled: 1
+    path: Assets/viargewinnt-lobby-newgame-scene.unity
+    guid: 84235db170f99c649a5a7a3dd134d8d2
+  - enabled: 1
+    path: Assets/viargewinnt-lobby-joingame-scene.unity
+    guid: fd62ba18ab5789e4daf36d307178646e
+  - enabled: 1
+    path: Assets/viargewinnt-lobby-waiting-scene.unity
+    guid: de06f8ed2001f004bbcf7780bf0afe6b
+  - enabled: 1
+    path: Assets/viargewinnt-lobby-newgame-name-scene.unity
+    guid: 571de2e10b107eb4591301f5ebb93799
   m_configObjects: {}

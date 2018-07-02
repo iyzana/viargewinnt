@@ -24,14 +24,12 @@ public class mainMenu : MonoBehaviour {
     }
     
     void StartOnlineGame(){
-        GameInformation.GAMEMODE = "ONLINE";
-        SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
+        SceneManager.LoadScene("viargewinnt-lobby-newgame-name-scene", LoadSceneMode.Single);
 
     }
     
     void JoinOnlineGame(){
-        GameInformation.GAMEMODE = "JOINONLINE";
-        SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
+        SceneManager.LoadScene("viargewinnt-lobby-joingame-scene", LoadSceneMode.Single);
 
     }
 	
