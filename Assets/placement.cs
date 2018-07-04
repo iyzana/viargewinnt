@@ -26,6 +26,25 @@ public class placement : MonoBehaviour {
     public Transform tracked;
     private Transform token;
 
+    public Material material1;
+    public Material material1light;
+    public Material material2;
+    public Material material2light;
+    public Material material3;
+    public Material material3light;
+    public Material material4;
+    public Material material4light;
+    public Material material5;
+    public Material material5light;
+    public Material material6;
+    public Material material6light;
+    public Material material7;
+    public Material material7light;
+    public Material material8;
+    public Material material8light;
+
+    private Material[] materials = new Material[16];
+
     public string[,] field = new string[7, 6];
 
     private long lastChange = 0;
@@ -36,10 +55,26 @@ public class placement : MonoBehaviour {
     private Vector3 lastVector = new Vector3(-1, 0, 0);
     private WebSocket w;
 
+
     // Use this for initialization
     void Start() {
 
-        
+        materials[0] = material1;
+        materials[1] = material2;
+        materials[2] = material3;
+        materials[3] = material4;
+        materials[4] = material5;
+        materials[5] = material6;
+        materials[6] = material7;
+        materials[7] = material8;
+        materials[8] = material1light;
+        materials[9] = material2light;
+        materials[10] = material3light;
+        materials[11] = material4light;
+        materials[12] = material5light;
+        materials[13] = material6light;
+        materials[14] = material7light;
+        materials[15] = material8light;
 
         for (int x = 0; x < field.GetLength(0); x++)
         {
@@ -49,6 +84,7 @@ public class placement : MonoBehaviour {
             }
         }
         isLocal = GameInformation.GAMEMODE.Equals("LOCAL");
+
         token = Instantiate(tokenPlaceLightPrefab, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
 
         leftButton.GetComponent<Button>().onClick.AddListener(LeftClick);
@@ -174,6 +210,13 @@ public class placement : MonoBehaviour {
         }
         else
         {
+            if (turnEvent.type.Equals("GAMESTART"))
+            {
+                int index = Array.IndexOf(turnEvent.game.players, HttpService.player);
+                Material[] mats = new Material[1];
+                mats[0] = materials[index];
+                tokenDarkPrefab.GetComponent<Renderer>().materials = mats;
+            }
             for (int x = 0; x < field.GetLength(0); x++)
             {
                 for (int y = 0; y < field.GetLength(1); y++)
@@ -181,8 +224,11 @@ public class placement : MonoBehaviour {
                     if (turnEvent.game.grid[x].pieces[y]!=null && !field[x, y].Equals(turnEvent.game.grid[x].pieces[y]))
                     {
                         field[x, y] = turnEvent.game.grid[x].pieces[y];
-                        Transform material = turnEvent.game.grid[x].pieces[y].Equals(HttpService.player) ? tokenLightPrefab : tokenDarkPrefab;
-                        Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
+                        int index = Array.IndexOf(turnEvent.game.players,turnEvent.game.grid[x].pieces[y]);
+                        Material[] mats = new Material[1];
+                        mats[0] = materials[index];
+                        tokenDarkPrefab.GetComponent<Renderer>().materials = mats;
+                        Instantiate(tokenDarkPrefab, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
                         text.text = turnEvent.game.currentPlayer+" ist am Zug!";
                     }
                 }
