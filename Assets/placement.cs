@@ -214,8 +214,8 @@ public class placement : MonoBehaviour {
             {
                 int index = Array.IndexOf(turnEvent.game.players, HttpService.player);
                 Material[] mats = new Material[1];
-                mats[0] = materials[index];
-                tokenDarkPrefab.GetComponent<Renderer>().materials = mats;
+                mats[0] = materials[index+8];
+                token.GetComponent<Renderer>().materials = mats;
             }
             for (int x = 0; x < field.GetLength(0); x++)
             {

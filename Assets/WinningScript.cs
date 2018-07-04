@@ -15,7 +15,7 @@ public class WinningScript : MonoBehaviour {
         text.text = GameInformation.WINNINGTEXT;
         if (!GameInformation.GAMEMODE.Equals("LOCAL"))
         {
-            Destroy(newGameButton);
+            Destroy(newGameButton.gameObject);
         }
         else
         {
