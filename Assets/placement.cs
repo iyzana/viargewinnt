@@ -149,6 +149,10 @@ public class placement : MonoBehaviour {
 
     private void CheckWebsocket()
     {
+        if (w == null)
+        {
+            return;
+        }
         string reply = w.RecvString();
         if (reply == null)
         {
