@@ -40,6 +40,7 @@ public class WaitingForGame : MonoBehaviour {
         if (turnEvent.type.Equals("GAMESTART"))
         {
             GameInformation.GAMEMODE = "ONLINE";
+            GameInformation.players = turnEvent.game.players;
             SceneManager.LoadScene("viargewinnt-scene", LoadSceneMode.Single);
         }
         

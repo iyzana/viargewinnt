@@ -48,6 +48,7 @@ public class NewGame : MonoBehaviour {
             players += turnEvent.game.players[i] + "\n";
         }
         spieler.text = players;
+        GameInformation.players = turnEvent.game.players;
     }
 
     void StartGame(){

@@ -1273,6 +1273,8 @@ MonoBehaviour:
     type: 2}
   tokenPlaceDarkPrefab: {fileID: 4423405573543898, guid: 4a839a48198f0de4080d63c18adf2602,
     type: 2}
+  multiplayer: {fileID: 4423405573543898, guid: 24ff6663f04aa9b458832aab73cd4cfc,
+    type: 2}
   tracked: {fileID: 1027490693}
   material1: {fileID: 2100000, guid: fc4e84e90db125c4cb4f707a1ad9e00b, type: 2}
   material1light: {fileID: 2100000, guid: 5db4a8f563b384540a855f48016d1f0b, type: 2}

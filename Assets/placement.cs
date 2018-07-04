@@ -22,6 +22,7 @@ public class placement : MonoBehaviour {
     public Transform tokenDarkPrefab;
     public Transform tokenPlaceLightPrefab;
     public Transform tokenPlaceDarkPrefab;
+    public Transform multiplayer;
 
     public Transform tracked;
     private Transform token;
@@ -98,6 +99,15 @@ public class placement : MonoBehaviour {
         else
         {
             w = HttpService.w;
+
+            int index = Array.IndexOf(GameInformation.players, HttpService.player);
+            Debug.Log("player: " + HttpService.player);
+            Debug.Log("index: " + index);
+            Material[] mats = new Material[1];
+            mats[0] = materials[index + 8];
+            token.GetComponent<Renderer>().materials = mats;
+            text.text = GameInformation.players[0] + " ist am Zug!";
+            
         }
         
     }
@@ -124,6 +134,7 @@ public class placement : MonoBehaviour {
         if (!isLocal)
         {
             CheckWebsocket();
+
         }
 
         bool trackingPositionChanged = !lastVector.Equals(tracked.position);
@@ -216,13 +227,6 @@ public class placement : MonoBehaviour {
         }
         else
         {
-            if (turnEvent.type.Equals("GAMESTART"))
-            {
-                int index = Array.IndexOf(turnEvent.game.players, HttpService.player);
-                Material[] mats = new Material[1];
-                mats[0] = materials[index+8];
-                token.GetComponent<Renderer>().materials = mats;
-            }
             for (int x = 0; x < field.GetLength(0); x++)
             {
                 for (int y = 0; y < field.GetLength(1); y++)
@@ -233,8 +237,8 @@ public class placement : MonoBehaviour {
                         int index = Array.IndexOf(turnEvent.game.players,turnEvent.game.grid[x].pieces[y]);
                         Material[] mats = new Material[1];
                         mats[0] = materials[index];
-                        tokenDarkPrefab.GetComponent<Renderer>().materials = mats;
-                        Instantiate(tokenDarkPrefab, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
+                        multiplayer.GetComponent<Renderer>().materials = mats;
+                        Instantiate(multiplayer, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
                         text.text = turnEvent.game.currentPlayer+" ist am Zug!";
                     }
                 }
