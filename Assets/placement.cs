@@ -167,6 +167,12 @@ public class placement : MonoBehaviour {
                         SceneManager.LoadScene("viargewinnt-winning-scene", LoadSceneMode.Single);
                         break;
                     }
+                    else if (WinDetection.isTie(field))
+                    {
+                        GameInformation.WINNINGTEXT = "Unentschieden!!";
+                        SceneManager.LoadScene("viargewinnt-winning-scene", LoadSceneMode.Single);
+                        break;
+                    }
 
                     Transform material = nextColor ? tokenLightPrefab : tokenDarkPrefab;
                     Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);

@@ -72,4 +72,19 @@ public static class WinDetection
 
         return true;
     }
+
+    public static bool isTie(string[,] field){
+        for (int x = 0; x < field.GetLength(0); x++)
+        {
+            for (int y = 0; y < field.GetLength(1); y++)
+            {
+                if (field[x, y].Equals(""))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
