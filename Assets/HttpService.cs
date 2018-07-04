@@ -9,7 +9,7 @@ public class HttpService
 
     public static string gameId { get; set; }
     public static string player { get; set; }
-    private const string baseUrl = "localhost:4567/";
+    private const string baseUrl = "viargewinnt.randomerror.de:4567/";
     public static WebSocket w;
 
     public static string HttPost(string url, string content = "")

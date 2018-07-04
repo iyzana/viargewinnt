@@ -23,6 +23,9 @@ public class JoinGame : MonoBehaviour {
 
     void JoinGameStart(){
         HttpService.HttPost("join/" + gameIdInput.text + "/"+nameInput.text);
+        HttpService.gameId = gameIdInput.text;
+        HttpService.player = nameInput.text;
+        HttpService.startSocket();
         SceneManager.LoadScene("viargewinnt-lobby-waiting-scene", LoadSceneMode.Single);
     }
 }

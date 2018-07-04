@@ -39,7 +39,7 @@ public class placement : MonoBehaviour {
     // Use this for initialization
     void Start() {
 
-        w = HttpService.w;
+        
 
         for (int x = 0; x < field.GetLength(0); x++)
         {
@@ -55,34 +55,17 @@ public class placement : MonoBehaviour {
         rightButton.GetComponent<Button>().onClick.AddListener(RightClick);
         placeButton.GetComponent<Button>().onClick.AddListener(PlaceClick);
 
-        text.text = "Spieler 1 beginnt!";
+        if (isLocal)
+        {
+            text.text = "Spieler 1 beginnt!";
+        }
+        else
+        {
+            w = HttpService.w;
+        }
+        
     }
     
-    [System.Serializable]
-    class TurnEvent {
-        public Game game;
-        public string previousPlayer;
-        public bool win;
-        public string messageType;
-    }
-
-    [System.Serializable]
-    class Game {
-        public string state;
-        public long id;
-        public string[] players;
-        public string currentPlayer;
-        public int width;
-        public int height;
-        public Column[] grid;
-    }
-
-    [System.Serializable]
-    class Column
-    {
-        public string[] pieces;
-    }
-
     void LeftClick() {
         fieldPosition--;
         if (fieldPosition < 0) fieldPosition = 0;
@@ -102,7 +85,10 @@ public class placement : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        CheckWebsocket();
+        if (!isLocal)
+        {
+            CheckWebsocket();
+        }
 
         bool trackingPositionChanged = !lastVector.Equals(tracked.position);
         if (trackingPositionChanged) {
@@ -151,7 +137,7 @@ public class placement : MonoBehaviour {
                     nextColor = !nextColor;
                     Destroy(token.gameObject);
                     Transform placeMaterial = nextColor ? tokenPlaceLightPrefab : tokenPlaceDarkPrefab;
-                    //text.text = nextColor ? "Spieler1 ist am Zug!" : "Spieler2 ist am Zug!";
+                    text.text = nextColor ? "Spieler1 ist am Zug!" : "Spieler2 ist am Zug!";
                     token = Instantiate(placeMaterial, new Vector3(0f, 0.65f, 0f), Quaternion.identity);
                     break;
 
@@ -176,6 +162,7 @@ public class placement : MonoBehaviour {
 
     private void renderChanges(TurnEvent turnEvent)
     {
+        
         if (turnEvent.win)
         {
             GameInformation.WINNINGTEXT = turnEvent.previousPlayer + " hat gewonnen!!";
@@ -187,11 +174,12 @@ public class placement : MonoBehaviour {
             {
                 for (int y = 0; y < field.GetLength(1); y++)
                 {
-                    if (!field[x, y].Equals(turnEvent.game.grid[x].pieces[y]))
+                    if (turnEvent.game.grid[x].pieces[y]!=null && !field[x, y].Equals(turnEvent.game.grid[x].pieces[y]))
                     {
                         field[x, y] = turnEvent.game.grid[x].pieces[y];
                         Transform material = turnEvent.game.grid[x].pieces[y].Equals(HttpService.player) ? tokenLightPrefab : tokenDarkPrefab;
                         Instantiate(material, new Vector3((x - 3) * 0.1f, (5 - y) * 0.1f + 0.05f, 0f), Quaternion.identity);
+                        text.text = turnEvent.game.currentPlayer+" ist am Zug!";
                     }
                 }
             }

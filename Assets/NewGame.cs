@@ -11,15 +11,43 @@ public class NewGame : MonoBehaviour {
     public Text spieler;
     public Text gameIdText;
 
+    private WebSocket w;
+
     // Use this for initialization
     void Start() {
         startButton.GetComponent<Button>().onClick.AddListener(StartGame);
         gameIdText.text = "Game-Id: "+HttpService.gameId;
+        w = HttpService.w;
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
+        CheckWebsocket();
 
+    }
+
+    private void CheckWebsocket()
+    {
+        string reply = w.RecvString();
+        if (reply == null)
+        {
+            return;
+        }
+
+        Debug.Log("got websocket message: " + reply);
+        TurnEvent turnEvent = JsonUtility.FromJson<TurnEvent>(reply);
+        updatePlayers(turnEvent);
+    }
+
+    private void updatePlayers(TurnEvent turnEvent)
+    {
+        string players = "";
+        for(int i = 0; i < turnEvent.game.players.GetLength(0); i++)
+        {
+            players += turnEvent.game.players[i] + "\n";
+        }
+        spieler.text = players;
     }
 
     void StartGame(){

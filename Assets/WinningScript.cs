@@ -13,7 +13,14 @@ public class WinningScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
         text.text = GameInformation.WINNINGTEXT;
-        newGameButton.GetComponent<Button>().onClick.AddListener(NewGame);
+        if (!GameInformation.GAMEMODE.Equals("LOCAL"))
+        {
+            Destroy(newGameButton);
+        }
+        else
+        {
+            newGameButton.GetComponent<Button>().onClick.AddListener(NewGame);
+        }
         mainMenuButton.GetComponent<Button>().onClick.AddListener(ToMainMenu);
     }
 	
